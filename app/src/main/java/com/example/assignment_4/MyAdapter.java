@@ -1,7 +1,10 @@
 package com.example.assignment_4;
 
+import android.app.DownloadManager;
 import android.content.Context;
+import android.content.Intent;
 import android.inputmethodservice.Keyboard;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
@@ -44,7 +48,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
 
         Picasso.get().load(basePath + book_Cover[position]).into(holder.book_cover);
         Log.i("Path ", basePath + book_Cover[position]);
@@ -52,7 +56,39 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         holder.Book_title.setText(titles[position]);
         holder.level.setText(levels[position]);
         holder.book_desc.setText(books_description[position]);
-        String format = Urls[position].substring(Urls[position].length() - 4);
+
+
+
+        String CompleteUrl[] =Urls[position].split("\\.");
+        String format = CompleteUrl[CompleteUrl.length - 1];
+
+        if(format.equals("zip") || format.equals("pdf"))
+        {
+            holder.btn.setText("DOWNLOAD");
+            holder.btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String DownloadUrl = Urls[position];
+                    DownloadManager downloadManager = (DownloadManager)context.getSystemService(context.DOWNLOAD_SERVICE);
+                    Uri uri = Uri.parse(DownloadUrl);
+                    DownloadManager.Request downloadRequest = new DownloadManager.Request(uri);
+                    downloadRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                    downloadManager.enqueue(downloadRequest);
+                }
+            });
+        }
+        else{
+            holder.btn.setText("READ ONLINE");
+            holder.btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String Url = Urls[position];
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(Url));
+                    ContextCompat.startActivity(context, intent, null);
+                }
+            });
+        }
 
     }
 

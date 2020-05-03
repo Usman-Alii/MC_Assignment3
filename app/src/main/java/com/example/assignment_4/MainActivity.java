@@ -3,12 +3,9 @@ package com.example.assignment_4;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Bundle;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
